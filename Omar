@@ -6,384 +6,464 @@ local UserInputService = game:GetService("UserInputService")
 
 -- المتغيرات
 local player = Players.LocalPlayer
-local mouse = player:GetMouse()
 local screenGui = Instance.new("ScreenGui")
-local mainButton = Instance.new("TextButton")
-local mainFrame = Instance.new("Frame")
-local closeButton = Instance.new("TextButton")
-local titleLabel = Instance.new("TextLabel")
-local versionLabel = Instance.new("TextLabel")
-local inputBox = Instance.new("TextBox")
-local sendButton = Instance.new("TextButton")
-local scrollFrame = Instance.new("ScrollingFrame")
-local colorFrame = Instance.new("Frame")
-local colorLabel = Instance.new("TextLabel")
-
--- إنشاء الواجهة الرئيسية
-screenGui.Name = "ArabicScriptUI"
+screenGui.Name = "AzoozScriptUI"
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 screenGui.Parent = player:WaitForChild("PlayerGui")
 
--- الزر الرئيسي المتحرك
+-- العرض الأولي "Azooz script"
+local welcomeLabel = Instance.new("TextLabel")
+welcomeLabel.Name = "WelcomeLabel"
+welcomeLabel.Size = UDim2.new(1, 0, 1, 0)
+welcomeLabel.Position = UDim2.new(0, 0, 0, 0)
+welcomeLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+welcomeLabel.BackgroundTransparency = 0.3
+welcomeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+welcomeLabel.Text = "Azooz script"
+welcomeLabel.Font = Enum.Font.GothamBold
+welcomeLabel.TextSize = 36
+welcomeLabel.TextStrokeTransparency = 0
+welcomeLabel.TextStrokeColor3 = Color3.fromRGB(0, 150, 255)
+welcomeLabel.Visible = true
+welcomeLabel.ZIndex = 100
+welcomeLabel.Parent = screenGui
+
+-- الزر الرئيسي المتحرك (مخفي في البداية)
+local mainButton = Instance.new("TextButton")
 mainButton.Name = "MainButton"
-mainButton.Size = UDim2.new(0, 50, 0, 50)
-mainButton.Position = UDim2.new(0, 20, 0.5, -25)
+mainButton.Size = UDim2.new(0, 60, 0, 60)
+mainButton.Position = UDim2.new(0.5, -30, 0.1, 0)
 mainButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 mainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 mainButton.Text = "⚙️"
 mainButton.Font = Enum.Font.GothamBold
-mainButton.TextSize = 20
+mainButton.TextSize = 24
 mainButton.BorderSizePixel = 0
+mainButton.Visible = false
 mainButton.ZIndex = 10
 mainButton.Parent = screenGui
 
 -- إطار القائمة الرئيسي (مخفي في البداية)
+local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 400, 0, 500)
-mainFrame.Position = UDim2.new(0.5, -200, 0.5, -250)
+mainFrame.Size = UDim2.new(0.85, 0, 0.7, 0) -- متجاوب مع الشاشة
+mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+mainFrame.BackgroundTransparency = 0.1
 mainFrame.BorderSizePixel = 0
 mainFrame.Visible = false
 mainFrame.ZIndex = 5
 mainFrame.Parent = screenGui
 
--- زر الإغلاق (×)
+-- شريط العنوان
+local titleBar = Instance.new("Frame")
+titleBar.Name = "TitleBar"
+titleBar.Size = UDim2.new(1, 0, 0, 40)
+titleBar.Position = UDim2.new(0, 0, 0, 0)
+titleBar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+titleBar.BackgroundTransparency = 0.5
+titleBar.BorderSizePixel = 0
+titleBar.ZIndex = 6
+titleBar.Parent = mainFrame
+
+-- زر الإغلاق
+local closeButton = Instance.new("TextButton")
 closeButton.Name = "CloseButton"
-closeButton.Size = UDim2.new(0, 30, 0, 30)
-closeButton.Position = UDim2.new(1, -35, 0, 5)
+closeButton.Size = UDim2.new(0, 35, 0, 35)
+closeButton.Position = UDim2.new(1, -40, 0, 2)
 closeButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeButton.Text = "×"
 closeButton.Font = Enum.Font.GothamBold
-closeButton.TextSize = 24
+closeButton.TextSize = 28
 closeButton.BorderSizePixel = 0
-closeButton.ZIndex = 6
-closeButton.Parent = mainFrame
+closeButton.ZIndex = 7
+closeButton.Parent = titleBar
 
--- عنوان "سكريبت عربي"
+-- عنوان القائمة
+local titleLabel = Instance.new("TextLabel")
 titleLabel.Name = "TitleLabel"
-titleLabel.Size = UDim2.new(1, -40, 0, 40)
-titleLabel.Position = UDim2.new(0, 20, 0, 20)
+titleLabel.Size = UDim2.new(1, -50, 1, 0)
+titleLabel.Position = UDim2.new(0, 10, 0, 0)
 titleLabel.BackgroundTransparency = 1
 titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 titleLabel.Text = "سكريبت عربي"
 titleLabel.Font = Enum.Font.GothamBold
-titleLabel.TextSize = 28
-titleLabel.TextXAlignment = Enum.TextXAlignment.Right
-titleLabel.ZIndex = 6
-titleLabel.Parent = mainFrame
+titleLabel.TextSize = 22
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.ZIndex = 7
+titleLabel.Parent = titleBar
 
--- نسخة "1.0 v"
-versionLabel.Name = "VersionLabel"
-versionLabel.Size = UDim2.new(1, -40, 0, 20)
-versionLabel.Position = UDim2.new(0, 20, 0, 70)
-versionLabel.BackgroundTransparency = 1
-versionLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-versionLabel.Text = "1.0 v"
-versionLabel.Font = Enum.Font.Gotham
-versionLabel.TextSize = 18
-versionLabel.TextXAlignment = Enum.TextXAlignment.Right
-versionLabel.ZIndex = 6
-versionLabel.Parent = mainFrame
+-- مربع الإدخال
+local inputFrame = Instance.new("Frame")
+inputFrame.Name = "InputFrame"
+inputFrame.Size = UDim2.new(1, -20, 0, 50)
+inputFrame.Position = UDim2.new(0, 10, 0, 60)
+inputFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+inputFrame.BorderSizePixel = 0
+inputFrame.ZIndex = 6
+inputFrame.Parent = mainFrame
 
--- إطار الألوان المتغيرة
-colorFrame.Name = "ColorFrame"
-colorFrame.Size = UDim2.new(0, 50, 1, -40)
-colorFrame.Position = UDim2.new(0, 10, 0, 40)
-colorFrame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-colorFrame.BorderSizePixel = 0
-colorFrame.ZIndex = 5
-colorFrame.Parent = mainFrame
-
--- عنوان الألوان
-colorLabel.Name = "ColorLabel"
-colorLabel.Size = UDim2.new(1, 0, 0, 30)
-colorLabel.Position = UDim2.new(0, 0, 0, 0)
-colorLabel.BackgroundTransparency = 1
-colorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-colorLabel.Text = "ألوان"
-colorLabel.Font = Enum.Font.GothamBold
-colorLabel.TextSize = 16
-colorLabel.TextXAlignment = Enum.TextXAlignment.Right
-colorLabel.ZIndex = 6
-colorLabel.Parent = colorFrame
-
--- إطار التمرير للقائمة
-scrollFrame.Name = "ScrollFrame"
-scrollFrame.Size = UDim2.new(1, -80, 0, 300)
-scrollFrame.Position = UDim2.new(0, 70, 0, 120)
-scrollFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-scrollFrame.BorderSizePixel = 0
-scrollFrame.ScrollBarThickness = 8
-scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-scrollFrame.ZIndex = 5
-scrollFrame.Parent = mainFrame
-
--- مربع النص "اكتب ما تريد"
+local inputBox = Instance.new("TextBox")
 inputBox.Name = "InputBox"
-inputBox.Size = UDim2.new(1, -80, 0, 40)
-inputBox.Position = UDim2.new(0, 70, 0, 100)
-inputBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+inputBox.Size = UDim2.new(1, -10, 1, 0)
+inputBox.Position = UDim2.new(0, 5, 0, 0)
+inputBox.BackgroundTransparency = 1
 inputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 inputBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
-inputBox.PlaceholderText = "اكتب ما تريد..."
+inputBox.PlaceholderText = "اكتب رسالتك هنا..."
 inputBox.Text = ""
 inputBox.Font = Enum.Font.Gotham
 inputBox.TextSize = 18
 inputBox.TextXAlignment = Enum.TextXAlignment.Right
 inputBox.ClearTextOnFocus = false
-inputBox.ZIndex = 6
-inputBox.Parent = mainFrame
+inputBox.ZIndex = 7
+inputBox.Parent = inputFrame
 
 -- زر الإرسال
+local sendButton = Instance.new("TextButton")
 sendButton.Name = "SendButton"
-sendButton.Size = UDim2.new(1, -80, 0, 40)
-sendButton.Position = UDim2.new(0, 70, 0, 430)
+sendButton.Size = UDim2.new(1, -20, 0, 45)
+sendButton.Position = UDim2.new(0, 10, 0, 120)
 sendButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
 sendButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-sendButton.Text = "إرسال للجميع"
+sendButton.Text = "إرسال"
 sendButton.Font = Enum.Font.GothamBold
-sendButton.TextSize = 18
+sendButton.TextSize = 20
 sendButton.BorderSizePixel = 0
 sendButton.ZIndex = 6
 sendButton.Parent = mainFrame
 
--- تحسين إطار التمرير
-local UIListLayout = Instance.new("UIListLayout")
-UIListLayout.Padding = UDim.new(0, 5)
-UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-UIListLayout.Parent = scrollFrame
+-- منطقة عرض الرسائل
+local messagesFrame = Instance.new("ScrollingFrame")
+messagesFrame.Name = "MessagesFrame"
+messagesFrame.Size = UDim2.new(1, -20, 1, -180)
+messagesFrame.Position = UDim2.new(0, 10, 0, 175)
+messagesFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+messagesFrame.BackgroundTransparency = 0.5
+messagesFrame.BorderSizePixel = 0
+messagesFrame.ScrollBarThickness = 6
+messagesFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+messagesFrame.ZIndex = 6
+messagesFrame.Parent = mainFrame
 
-local UIPadding = Instance.new("UIPadding")
-UIPadding.PaddingTop = UDim.new(0, 10)
-UIPadding.PaddingRight = UDim.new(0, 10)
-UIPadding.PaddingLeft = UDim.new(0, 10)
-UIPadding.Parent = scrollFrame
+-- ترتيب الرسائل
+local messagesLayout = Instance.new("UIListLayout")
+messagesLayout.Padding = UDim.new(0, 8)
+messagesLayout.SortOrder = Enum.SortOrder.LayoutOrder
+messagesLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+messagesLayout.Parent = messagesFrame
 
--- دالة لإضافة عنصر للقائمة
-local function addToScrollFrame(text)
-    local itemFrame = Instance.new("Frame")
-    itemFrame.Name = "Item"
-    itemFrame.Size = UDim2.new(1, -20, 0, 40)
-    itemFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    itemFrame.BorderSizePixel = 0
-    itemFrame.LayoutOrder = #scrollFrame:GetChildren()
-    
-    local itemLabel = Instance.new("TextLabel")
-    itemLabel.Name = "Text"
-    itemLabel.Size = UDim2.new(1, -10, 1, 0)
-    itemLabel.Position = UDim2.new(0, 5, 0, 0)
-    itemLabel.BackgroundTransparency = 1
-    itemLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    itemLabel.Text = text
-    itemLabel.Font = Enum.Font.Gotham
-    itemLabel.TextSize = 16
-    itemLabel.TextXAlignment = Enum.TextXAlignment.Right
-    itemLabel.TextWrapped = true
-    itemLabel.Parent = itemFrame
-    
-    itemFrame.Parent = scrollFrame
-    
-    -- تحديث حجم CanvasSize
-    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 20)
-    
-    return itemFrame
-end
+local messagesPadding = Instance.new("UIPadding")
+messagesPadding.PaddingTop = UDim.new(0, 10)
+messagesPadding.PaddingBottom = UDim.new(0, 10)
+messagesPadding.PaddingLeft = UDim.new(0, 5)
+messagesPadding.PaddingRight = UDim.new(0, 5)
+messagesPadding.Parent = messagesFrame
 
--- دالة لتغيير لون الإطار كل ثانية
-local function startColorAnimation()
-    local colors = {
-        Color3.fromRGB(255, 0, 0),    -- أحمر
-        Color3.fromRGB(0, 255, 0),    -- أخضر
-        Color3.fromRGB(0, 0, 255),    -- أزرق
-        Color3.fromRGB(255, 255, 0),  -- أصفر
-        Color3.fromRGB(255, 0, 255),  -- أرجواني
-        Color3.fromRGB(0, 255, 255)   -- سماوي
-    }
-    
-    local currentIndex = 1
-    
-    while true do
-        colorFrame.BackgroundColor3 = colors[currentIndex]
-        
-        currentIndex = currentIndex + 1
-        if currentIndex > #colors then
-            currentIndex = 1
-        end
-        
-        wait(1) -- تغيير اللون كل ثانية
-    end
-end
-
--- دالة لإرسال الرسالة للجميع
-local function sendMessageToAll(message)
-    if message == "" then
-        return
-    end
-    
-    -- إضافة الرسالة للقائمة المحلية
-    addToScrollFrame(player.Name .. ": " .. message)
-    
-    -- هنا يمكنك إضافة كود لإرسال الرسالة للاعبين الآخرين
-    -- مثال باستخدام RemoteEvent:
-    -- game.ReplicatedStorage.SendMessage:FireServer(message)
-    
-    -- عرض في الشات (للتجربة فقط)
-    game.StarterGui:SetCore("ChatMakeSystemMessage", {
-        Text = player.Name .. ": " .. message,
-        Color = Color3.fromRGB(0, 200, 255),
-        Font = Enum.Font.Gotham,
-        TextSize = 18
-    })
-    
-    -- مسح حقل الإدخال
-    inputBox.Text = ""
+-- إضافة الزوايا الدائرية والظلال
+local function addVisualEffects()
+	-- زوايا دائرية للزر الرئيسي
+	local buttonCorner = Instance.new("UICorner")
+	buttonCorner.CornerRadius = UDim.new(1, 0) -- دائري كامل
+	buttonCorner.Parent = mainButton
+	
+	-- ظل للزر الرئيسي
+	local buttonShadow = Instance.new("UIStroke")
+	buttonShadow.Color = Color3.fromRGB(0, 150, 255)
+	buttonShadow.Thickness = 3
+	buttonShadow.Transparency = 0
+	buttonShadow.Parent = mainButton
+	
+	-- زوايا للإطار الرئيسي
+	local frameCorner = Instance.new("UICorner")
+	frameCorner.CornerRadius = UDim.new(0, 15)
+	frameCorner.Parent = mainFrame
+	
+	-- ظل للإطار الرئيسي
+	local frameShadow = Instance.new("UIStroke")
+	frameShadow.Color = Color3.fromRGB(0, 150, 255)
+	frameShadow.Thickness = 2
+	frameShadow.Transparency = 0
+	frameShadow.Parent = mainFrame
+	
+	-- زوايا لعناصر أخرى
+	local cornerElements = {inputFrame, sendButton, messagesFrame}
+	for _, element in ipairs(cornerElements) do
+		local corner = Instance.new("UICorner")
+		corner.CornerRadius = UDim.new(0, 8)
+		corner.Parent = element
+	end
+	
+	-- زوايا لشريط العنوان
+	local titleCorner = Instance.new("UICorner")
+	titleCorner.CornerRadius = UDim.new(0, 15, 0, 0)
+	titleCorner.Parent = titleBar
+	
+	-- زوايا دائرية لزر الإغلاق
+	local closeCorner = Instance.new("UICorner")
+	closeCorner.CornerRadius = UDim.new(1, 0)
+	closeCorner.Parent = closeButton
 end
 
 -- دالة لتحريك الزر
 local function makeButtonDraggable(button)
-    local dragging = false
-    local dragInput, dragStart, startPos
-    
-    local function update(input)
-        local delta = input.Position - dragStart
-        button.Position = UDim2.new(
-            startPos.X.Scale, 
-            startPos.X.Offset + delta.X, 
-            startPos.Y.Scale, 
-            startPos.Y.Offset + delta.Y
-        )
-    end
-    
-    button.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            dragStart = input.Position
-            startPos = button.Position
-            
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
-        end
-    end)
-    
-    button.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            dragInput = input
-        end
-    end)
-    
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and input == dragInput then
-            update(input)
-        end
-    end)
+	local dragging = false
+	local dragInput, dragStart, startPos
+	
+	local function update(input)
+		local delta = input.Position - dragStart
+		local newX = startPos.X.Offset + delta.X
+		local newY = startPos.Y.Offset + delta.Y
+		
+		-- الحفاظ داخل الشاشة
+		local viewportSize = workspace.CurrentCamera.ViewportSize
+		newX = math.clamp(newX, 0, viewportSize.X - button.AbsoluteSize.X)
+		newY = math.clamp(newY, 0, viewportSize.Y - button.AbsoluteSize.Y)
+		
+		button.Position = UDim2.new(0, newX, 0, newY)
+	end
+	
+	button.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true
+			dragStart = input.Position
+			startPos = button.Position
+			
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+	
+	button.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement then
+			dragInput = input
+		end
+	end)
+	
+	UserInputService.InputChanged:Connect(function(input)
+		if dragging and input == dragInput then
+			update(input)
+		end
+	end)
 end
 
--- إضافة ظلال وتحسينات بصرية
-local function addVisualEffects()
-    -- ظل للزر الرئيسي
-    local buttonShadow = Instance.new("UIStroke")
-    buttonShadow.Color = Color3.fromRGB(0, 0, 0)
-    buttonShadow.Thickness = 2
-    buttonShadow.Transparency = 0.5
-    buttonShadow.Parent = mainButton
-    
-    local buttonCorner = Instance.new("UICorner")
-    buttonCorner.CornerRadius = UDim.new(0, 10)
-    buttonCorner.Parent = mainButton
-    
-    -- ظل للإطار الرئيسي
-    local frameShadow = Instance.new("UIStroke")
-    frameShadow.Color = Color3.fromRGB(0, 0, 0)
-    frameShadow.Thickness = 3
-    frameShadow.Transparency = 0.3
-    frameShadow.Parent = mainFrame
-    
-    local frameCorner = Instance.new("UICorner")
-    frameCorner.CornerRadius = UDim.new(0, 15)
-    frameCorner.Parent = mainFrame
-    
-    -- زوايا دائرية لعناصر أخرى
-    local elements = {inputBox, sendButton, colorFrame, scrollFrame}
-    for _, element in ipairs(elements) do
-        local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, 8)
-        corner.Parent = element
-    end
-    
-    -- تأثير hover للزر الرئيسي
-    mainButton.MouseEnter:Connect(function()
-        TweenService:Create(mainButton, TweenInfo.new(0.2), {
-            BackgroundColor3 = Color3.fromRGB(40, 40, 40),
-            Size = UDim2.new(0, 55, 0, 55)
-        }):Play()
-    end)
-    
-    mainButton.MouseLeave:Connect(function()
-        TweenService:Create(mainButton, TweenInfo.new(0.2), {
-            BackgroundColor3 = Color3.fromRGB(25, 25, 25),
-            Size = UDim2.new(0, 50, 0, 50)
-        }):Play()
-    end)
+-- دالة لتغيير ألوان الزوايا
+local function startColorAnimation()
+	local colors = {
+		Color3.fromRGB(255, 0, 0),    -- أحمر
+		Color3.fromRGB(0, 255, 0),    -- أخضر
+		Color3.fromRGB(0, 0, 255),    -- أزرق
+		Color3.fromRGB(255, 255, 0),  -- أصفر
+		Color3.fromRGB(255, 0, 255),  -- أرجواني
+		Color3.fromRGB(0, 255, 255)   -- سماوي
+	}
+	
+	-- الحصول على جميع عناصر الزوايا
+	local elements = {mainFrame, mainButton, sendButton}
+	local strokes = {}
+	
+	for _, element in ipairs(elements) do
+		local stroke = element:FindFirstChild("UIStroke")
+		if stroke then
+			table.insert(strokes, stroke)
+		end
+	end
+	
+	local currentIndex = 1
+	
+	while true do
+		local color = colors[currentIndex]
+		
+		-- تغيير لون جميع الظلال
+		for _, stroke in ipairs(strokes) do
+			TweenService:Create(stroke, TweenInfo.new(0.5), {
+				Color = color
+			}):Play()
+		end
+		
+		-- تغيير لون خلفية الزر
+		TweenService:Create(mainButton, TweenInfo.new(0.5), {
+			BackgroundColor3 = Color3.fromRGB(color.R * 50, color.G * 50, color.B * 50)
+		}):Play()
+		
+		currentIndex = currentIndex % #colors + 1
+		wait(1)
+	end
 end
 
--- إضافة بعض العناصر الافتراضية للقائمة
-local function addDefaultItems()
-    addToScrollFrame("مرحبًا! هذه قائمة الرسائل")
-    addToScrollFrame("يمكنك كتابة رسالة وإرسالها للجميع")
-    addToScrollFrame("الرسائل تظهر هنا")
+-- دالة لإضافة رسالة للعرض
+local function addMessageToDisplay(sender, message)
+	local messageFrame = Instance.new("Frame")
+	messageFrame.Name = "Message"
+	messageFrame.Size = UDim2.new(0.95, 0, 0, 0)
+	messageFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	messageFrame.BackgroundTransparency = 0.3
+	messageFrame.LayoutOrder = #messagesFrame:GetChildren()
+	
+	local messageCorner = Instance.new("UICorner")
+	messageCorner.CornerRadius = UDim.new(0, 10)
+	messageCorner.Parent = messageFrame
+	
+	local senderLabel = Instance.new("TextLabel")
+	senderLabel.Name = "Sender"
+	senderLabel.Size = UDim2.new(1, -10, 0, 25)
+	senderLabel.Position = UDim2.new(0, 5, 0, 5)
+	senderLabel.BackgroundTransparency = 1
+	senderLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
+	senderLabel.Text = sender .. ":"
+	senderLabel.Font = Enum.Font.GothamBold
+	senderLabel.TextSize = 16
+	senderLabel.TextXAlignment = Enum.TextXAlignment.Right
+	senderLabel.TextWrapped = true
+	senderLabel.Parent = messageFrame
+	
+	local messageLabel = Instance.new("TextLabel")
+	messageLabel.Name = "Text"
+	messageLabel.Size = UDim2.new(1, -10, 0, 0)
+	messageLabel.Position = UDim2.new(0, 5, 0, 30)
+	messageLabel.BackgroundTransparency = 1
+	messageLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	messageLabel.Text = message
+	messageLabel.Font = Enum.Font.Gotham
+	messageLabel.TextSize = 18
+	messageLabel.TextXAlignment = Enum.TextXAlignment.Right
+	messageLabel.TextWrapped = true
+	messageLabel.Parent = messageFrame
+	
+	-- حساب ارتفاع النص
+	local textHeight = 20 + string.len(message) / 15 * 20
+	messageLabel.Size = UDim2.new(1, -10, 0, textHeight)
+	messageFrame.Size = UDim2.new(0.95, 0, 0, textHeight + 40)
+	
+	messageFrame.Parent = messagesFrame
+	
+	-- تحديث حجم CanvasSize
+	messagesFrame.CanvasSize = UDim2.new(0, 0, 0, messagesLayout.AbsoluteContentSize.Y + 20)
+	
+	-- التمرير للأسفل
+	messagesFrame.CanvasPosition = Vector2.new(0, messagesFrame.CanvasSize.Y.Offset)
+	
+	return messageFrame
 end
 
--- تهيئة الواجهة
-makeButtonDraggable(mainButton)
+-- دالة لإرسال الرسالة
+local function sendMessage()
+	local message = inputBox.Text
+	if message == "" or string.len(message) < 1 then
+		return
+	end
+	
+	-- إضافة الرسالة للعرض المحلي
+	addMessageToDisplay(player.Name, message)
+	
+	-- هنا يمكنك إضافة كود لإرسال الرسالة للاعبين الآخرين
+	-- مثال:
+	-- game.ReplicatedStorage.SendMessage:FireServer(message)
+	
+	-- عرض في الشات (للتجربة)
+	game.StarterGui:SetCore("ChatMakeSystemMessage", {
+		Text = "[" .. player.Name .. "]: " .. message,
+		Color = Color3.fromRGB(0, 200, 255),
+		Font = Enum.Font.Gotham,
+		TextSize = 18
+	})
+	
+	-- مسح حقل الإدخال
+	inputBox.Text = ""
+end
+
+-- تكييف الواجهة مع حجم الشاشة
+local function adaptToScreenSize()
+	local viewportSize = workspace.CurrentCamera.ViewportSize
+	
+	-- تكييف حجم القائمة للجوال
+	if viewportSize.Y > viewportSize.X then
+		-- وضع عمودي (جوال)
+		mainFrame.Size = UDim2.new(0.9, 0, 0.8, 0)
+		messagesFrame.Size = UDim2.new(1, -20, 1, -200)
+	else
+		-- وضع أفقي (كمبيوتر)
+		mainFrame.Size = UDim2.new(0.7, 0, 0.8, 0)
+		messagesFrame.Size = UDim2.new(1, -20, 1, -180)
+	end
+end
+
+-- التهيئة
 addVisualEffects()
-addDefaultItems()
+makeButtonDraggable(mainButton)
 
--- تشغيل رسوميات الألوان
+-- إخفاء الرسالة الترحيبية بعد 5 ثواني وإظهار الزر
+wait(5)
+TweenService:Create(welcomeLabel, TweenInfo.new(1), {
+	BackgroundTransparency = 1,
+	TextTransparency = 1,
+	TextStrokeTransparency = 1
+}):Play()
+
+wait(1)
+welcomeLabel:Destroy()
+
+-- إظهار الزر الرئيسي
+mainButton.Visible = true
+TweenService:Create(mainButton, TweenInfo.new(0.5), {
+	BackgroundTransparency = 0,
+	TextTransparency = 0
+}):Play()
+
+-- تكييف مع حجم الشاشة
+adaptToScreenSize()
+workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(adaptToScreenSize)
+
+-- تشغيل أنيميشن الألوان
 coroutine.wrap(startColorAnimation)()
 
 -- أحداث الأزرار
 mainButton.MouseButton1Click:Connect(function()
-    mainFrame.Visible = not mainFrame.Visible
-    
-    if mainFrame.Visible then
-        -- تأثير ظهور
-        mainFrame.BackgroundTransparency = 1
-        TweenService:Create(mainFrame, TweenInfo.new(0.3), {
-            BackgroundTransparency = 0
-        }):Play()
-    end
+	mainFrame.Visible = not mainFrame.Visible
+	
+	if mainFrame.Visible then
+		mainFrame.BackgroundTransparency = 1
+		TweenService:Create(mainFrame, TweenInfo.new(0.3), {
+			BackgroundTransparency = 0.1
+		}):Play()
+		
+		-- إعادة تركيز الإدخال
+		wait(0.3)
+		inputBox:CaptureFocus()
+	end
 end)
 
 closeButton.MouseButton1Click:Connect(function()
-    TweenService:Create(mainFrame, TweenInfo.new(0.3), {
-        BackgroundTransparency = 1
-    }):Play()
-    
-    wait(0.3)
-    mainFrame.Visible = false
-    mainFrame.BackgroundTransparency = 0
+	TweenService:Create(mainFrame, TweenInfo.new(0.3), {
+		BackgroundTransparency = 1
+	}):Play()
+	
+	wait(0.3)
+	mainFrame.Visible = false
+	mainFrame.BackgroundTransparency = 0.1
 end)
 
-sendButton.MouseButton1Click:Connect(function()
-    local message = inputBox.Text
-    sendMessageToAll(message)
-end)
+sendButton.MouseButton1Click:Connect(sendMessage)
 
 inputBox.FocusLost:Connect(function(enterPressed)
-    if enterPressed then
-        local message = inputBox.Text
-        sendMessageToAll(message)
-    end
+	if enterPressed then
+		sendMessage()
+	end
 end)
 
--- حماية من الإدخال الطويل
-inputBox:GetPropertyChangedSignal("Text"):Connect(function()
-    if #inputBox.Text > 100 then
-        inputBox.Text = string.sub(inputBox.Text, 1, 100)
-    end
+-- إضافة رسائل افتراضية للعرض
+addMessageToDisplay("System", "مرحباً! يمكنك كتابة رسائل هنا")
+addMessageToDisplay("System", "الرسائل ستبقى في هذه القائمة")
+
+-- التأكد من أن النصوص تظهر بشكل صحيح
+RunService.RenderStepped:Connect(function()
+	messagesFrame.CanvasSize = UDim2.new(0, 0, 0, messagesLayout.AbsoluteContentSize.Y + 20)
 end)
 
-print("✅ سكريبت الواجهة العربية جاهز للاستخدام!")
+print("✅ سكريبت Azooz جاهز!")
