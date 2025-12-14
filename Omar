@@ -1,190 +1,389 @@
--- الخدمات المطلوبة
+-- Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 
--- إعدادات السكريبت
-local config = {
-    forceDeath = true, -- الموت الفوري عند الإصابة
-    infiniteHealth = false, -- تعطيل الصحة اللانهائية
-    disableRegen = true, -- تعطيل تجديد الصحة
-    damageMultiplier = 1000, -- مضاعفة الضرر
-    deathOnAnyDamage = true -- الموت من أي ضرر
-}
+-- المتغيرات
+local player = Players.LocalPlayer
+local mouse = player:GetMouse()
+local screenGui = Instance.new("ScreenGui")
+local mainButton = Instance.new("TextButton")
+local mainFrame = Instance.new("Frame")
+local closeButton = Instance.new("TextButton")
+local titleLabel = Instance.new("TextLabel")
+local versionLabel = Instance.new("TextLabel")
+local inputBox = Instance.new("TextBox")
+local sendButton = Instance.new("TextButton")
+local scrollFrame = Instance.new("ScrollingFrame")
+local colorFrame = Instance.new("Frame")
+local colorLabel = Instance.new("TextLabel")
 
--- دالة لتطبيق الإعدادات على اللاعب
-local function setupPlayer(player)
-    local character = player.Character or player.CharacterAdded:Wait()
+-- إنشاء الواجهة الرئيسية
+screenGui.Name = "ArabicScriptUI"
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- الزر الرئيسي المتحرك
+mainButton.Name = "MainButton"
+mainButton.Size = UDim2.new(0, 50, 0, 50)
+mainButton.Position = UDim2.new(0, 20, 0.5, -25)
+mainButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+mainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainButton.Text = "⚙️"
+mainButton.Font = Enum.Font.GothamBold
+mainButton.TextSize = 20
+mainButton.BorderSizePixel = 0
+mainButton.ZIndex = 10
+mainButton.Parent = screenGui
+
+-- إطار القائمة الرئيسي (مخفي في البداية)
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 400, 0, 500)
+mainFrame.Position = UDim2.new(0.5, -200, 0.5, -250)
+mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+mainFrame.BorderSizePixel = 0
+mainFrame.Visible = false
+mainFrame.ZIndex = 5
+mainFrame.Parent = screenGui
+
+-- زر الإغلاق (×)
+closeButton.Name = "CloseButton"
+closeButton.Size = UDim2.new(0, 30, 0, 30)
+closeButton.Position = UDim2.new(1, -35, 0, 5)
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Text = "×"
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 24
+closeButton.BorderSizePixel = 0
+closeButton.ZIndex = 6
+closeButton.Parent = mainFrame
+
+-- عنوان "سكريبت عربي"
+titleLabel.Name = "TitleLabel"
+titleLabel.Size = UDim2.new(1, -40, 0, 40)
+titleLabel.Position = UDim2.new(0, 20, 0, 20)
+titleLabel.BackgroundTransparency = 1
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.Text = "سكريبت عربي"
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 28
+titleLabel.TextXAlignment = Enum.TextXAlignment.Right
+titleLabel.ZIndex = 6
+titleLabel.Parent = mainFrame
+
+-- نسخة "1.0 v"
+versionLabel.Name = "VersionLabel"
+versionLabel.Size = UDim2.new(1, -40, 0, 20)
+versionLabel.Position = UDim2.new(0, 20, 0, 70)
+versionLabel.BackgroundTransparency = 1
+versionLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+versionLabel.Text = "1.0 v"
+versionLabel.Font = Enum.Font.Gotham
+versionLabel.TextSize = 18
+versionLabel.TextXAlignment = Enum.TextXAlignment.Right
+versionLabel.ZIndex = 6
+versionLabel.Parent = mainFrame
+
+-- إطار الألوان المتغيرة
+colorFrame.Name = "ColorFrame"
+colorFrame.Size = UDim2.new(0, 50, 1, -40)
+colorFrame.Position = UDim2.new(0, 10, 0, 40)
+colorFrame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+colorFrame.BorderSizePixel = 0
+colorFrame.ZIndex = 5
+colorFrame.Parent = mainFrame
+
+-- عنوان الألوان
+colorLabel.Name = "ColorLabel"
+colorLabel.Size = UDim2.new(1, 0, 0, 30)
+colorLabel.Position = UDim2.new(0, 0, 0, 0)
+colorLabel.BackgroundTransparency = 1
+colorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+colorLabel.Text = "ألوان"
+colorLabel.Font = Enum.Font.GothamBold
+colorLabel.TextSize = 16
+colorLabel.TextXAlignment = Enum.TextXAlignment.Right
+colorLabel.ZIndex = 6
+colorLabel.Parent = colorFrame
+
+-- إطار التمرير للقائمة
+scrollFrame.Name = "ScrollFrame"
+scrollFrame.Size = UDim2.new(1, -80, 0, 300)
+scrollFrame.Position = UDim2.new(0, 70, 0, 120)
+scrollFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+scrollFrame.BorderSizePixel = 0
+scrollFrame.ScrollBarThickness = 8
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+scrollFrame.ZIndex = 5
+scrollFrame.Parent = mainFrame
+
+-- مربع النص "اكتب ما تريد"
+inputBox.Name = "InputBox"
+inputBox.Size = UDim2.new(1, -80, 0, 40)
+inputBox.Position = UDim2.new(0, 70, 0, 100)
+inputBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+inputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+inputBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
+inputBox.PlaceholderText = "اكتب ما تريد..."
+inputBox.Text = ""
+inputBox.Font = Enum.Font.Gotham
+inputBox.TextSize = 18
+inputBox.TextXAlignment = Enum.TextXAlignment.Right
+inputBox.ClearTextOnFocus = false
+inputBox.ZIndex = 6
+inputBox.Parent = mainFrame
+
+-- زر الإرسال
+sendButton.Name = "SendButton"
+sendButton.Size = UDim2.new(1, -80, 0, 40)
+sendButton.Position = UDim2.new(0, 70, 0, 430)
+sendButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+sendButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+sendButton.Text = "إرسال للجميع"
+sendButton.Font = Enum.Font.GothamBold
+sendButton.TextSize = 18
+sendButton.BorderSizePixel = 0
+sendButton.ZIndex = 6
+sendButton.Parent = mainFrame
+
+-- تحسين إطار التمرير
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Padding = UDim.new(0, 5)
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Parent = scrollFrame
+
+local UIPadding = Instance.new("UIPadding")
+UIPadding.PaddingTop = UDim.new(0, 10)
+UIPadding.PaddingRight = UDim.new(0, 10)
+UIPadding.PaddingLeft = UDim.new(0, 10)
+UIPadding.Parent = scrollFrame
+
+-- دالة لإضافة عنصر للقائمة
+local function addToScrollFrame(text)
+    local itemFrame = Instance.new("Frame")
+    itemFrame.Name = "Item"
+    itemFrame.Size = UDim2.new(1, -20, 0, 40)
+    itemFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    itemFrame.BorderSizePixel = 0
+    itemFrame.LayoutOrder = #scrollFrame:GetChildren()
     
-    -- الانتظار حتى يتم تحميل الشخصية بالكامل
-    character:WaitForChild("Humanoid")
+    local itemLabel = Instance.new("TextLabel")
+    itemLabel.Name = "Text"
+    itemLabel.Size = UDim2.new(1, -10, 1, 0)
+    itemLabel.Position = UDim2.new(0, 5, 0, 0)
+    itemLabel.BackgroundTransparency = 1
+    itemLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    itemLabel.Text = text
+    itemLabel.Font = Enum.Font.Gotham
+    itemLabel.TextSize = 16
+    itemLabel.TextXAlignment = Enum.TextXAlignment.Right
+    itemLabel.TextWrapped = true
+    itemLabel.Parent = itemFrame
     
-    local humanoid = character:WaitForChild("Humanoid")
+    itemFrame.Parent = scrollFrame
     
-    -- تعطيل الصحة اللانهائية
-    if not config.infiniteHealth then
-        humanoid.MaxHealth = 100
-        humanoid.Health = 100
-    end
+    -- تحديث حجم CanvasSize
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 20)
     
-    -- تعطيل تجديد الصحة
-    if config.disableRegen then
-        humanoid.HealthChanged:Connect(function()
-            if humanoid.Health > 0 and humanoid.Health < humanoid.MaxHealth then
-                humanoid.Health = humanoid.Health -- منع التجديد
-            end
-        end)
-    end
-    
-    -- مراقبة الضرر
-    humanoid.Touched:Connect(function(hit)
-        -- الكشف عن أي ضرر محتمل
-        if hit.Parent then
-            local damageValue = hit.Parent:FindFirstChild("Damage")
-            if damageValue then
-                applyDamage(humanoid, damageValue.Value)
-            end
-        end
-    end)
-    
-    -- إضافة مستشعر للضرر
-    local damageSensor = Instance.new("Part")
-    damageSensor.Name = "DamageSensor"
-    damageSensor.Size = Vector3.new(5, 5, 5)
-    damageSensor.Transparency = 1
-    damageSensor.CanCollide = false
-    damageSensor.Parent = character
-    
-    -- اتصال المستشعر
-    damageSensor.Touched:Connect(function(hit)
-        checkForDamage(humanoid, hit)
-    end)
+    return itemFrame
 end
 
--- دالة لتطبيق الضرر
-local function applyDamage(humanoid, damageAmount)
-    if config.forceDeath then
-        -- الموت الفوري
-        humanoid.Health = 0
-    elseif config.damageMultiplier > 1 then
-        -- مضاعفة الضرر
-        local actualDamage = damageAmount * config.damageMultiplier
-        humanoid.Health = math.max(0, humanoid.Health - actualDamage)
-    elseif config.deathOnAnyDamage then
-        -- الموت من أي ضرر
-        humanoid.Health = 0
-    else
-        -- الضرر العادي
-        humanoid.Health = math.max(0, humanoid.Health - damageAmount)
-    end
-end
-
--- دالة للكشف عن أنواع الضرر المختلفة
-local function checkForDamage(humanoid, hit)
-    local hitParent = hit.Parent
+-- دالة لتغيير لون الإطار كل ثانية
+local function startColorAnimation()
+    local colors = {
+        Color3.fromRGB(255, 0, 0),    -- أحمر
+        Color3.fromRGB(0, 255, 0),    -- أخضر
+        Color3.fromRGB(0, 0, 255),    -- أزرق
+        Color3.fromRGB(255, 255, 0),  -- أصفر
+        Color3.fromRGB(255, 0, 255),  -- أرجواني
+        Color3.fromRGB(0, 255, 255)   -- سماوي
+    }
     
-    -- الكشف عن الصواريخ والأسلحة
-    if hitParent and (hitParent.Name:lower():find("rocket") 
-        or hitParent.Name:lower():find("missile")
-        or hitParent.Name:lower():find("bullet")
-        or hitParent.Name:lower():find("explos")) then
-        applyDamage(humanoid, 1000)
-    end
+    local currentIndex = 1
     
-    -- الكشف عن الحيوانات أو الكائنات المعادية
-    if hitParent then
-        local humanoidOfHit = hitParent:FindFirstChild("Humanoid")
-        if humanoidOfHit then
-            -- كشف إذا كان حيوان أو عدو
-            if hitParent.Name:lower():find("animal")
-                or hitParent.Name:lower():find("wolf")
-                or hitParent.Name:lower():find("bear")
-                or hitParent.Name:lower():find("enemy") then
-                applyDamage(humanoid, 500)
-            end
-        end
-    end
-    
-    -- الكشف عن السكربتات أو التعويذات
-    if hitParent and hitParent:FindFirstChild("Script") then
-        local script = hitParent:FindFirstChild("Script")
-        if script and script:IsA("Script") then
-            applyDamage(humanoid, 9999)
-        end
-    end
-end
-
--- دالة لحماية اللاعب من السكربتات الأخرى
-local function protectFromExternalScripts(player)
-    local character = player.Character
-    if not character then return end
-    
-    -- إضافة حماية للـ Humanoid
-    local humanoid = character:FindFirstChild("Humanoid")
-    if humanoid then
-        -- مراقبة التغييرات في الـ Health
-        humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-            -- منع أي سكربت من تعديل الصحة بشكل غير مصرح به
-            if humanoid.Health > 100 then
-                humanoid.Health = 100
-            end
-        end)
+    while true do
+        colorFrame.BackgroundColor3 = colors[currentIndex]
         
-        -- مراقبة التغييرات في الـ MaxHealth
-        humanoid:GetPropertyChangedSignal("MaxHealth"):Connect(function()
-            if humanoid.MaxHealth > 100 then
-                humanoid.MaxHealth = 100
-            end
-        end)
+        currentIndex = currentIndex + 1
+        if currentIndex > #colors then
+            currentIndex = 1
+        end
+        
+        wait(1) -- تغيير اللون كل ثانية
+    end
+end
+
+-- دالة لإرسال الرسالة للجميع
+local function sendMessageToAll(message)
+    if message == "" then
+        return
     end
     
-    -- منع إضافة أي سكربتات خارجية
-    character.DescendantAdded:Connect(function(descendant)
-        if descendant:IsA("Script") and descendant.Name ~= "LocalScript" then
-            descendant.Disabled = true
-            descendant:Destroy()
+    -- إضافة الرسالة للقائمة المحلية
+    addToScrollFrame(player.Name .. ": " .. message)
+    
+    -- هنا يمكنك إضافة كود لإرسال الرسالة للاعبين الآخرين
+    -- مثال باستخدام RemoteEvent:
+    -- game.ReplicatedStorage.SendMessage:FireServer(message)
+    
+    -- عرض في الشات (للتجربة فقط)
+    game.StarterGui:SetCore("ChatMakeSystemMessage", {
+        Text = player.Name .. ": " .. message,
+        Color = Color3.fromRGB(0, 200, 255),
+        Font = Enum.Font.Gotham,
+        TextSize = 18
+    })
+    
+    -- مسح حقل الإدخال
+    inputBox.Text = ""
+end
+
+-- دالة لتحريك الزر
+local function makeButtonDraggable(button)
+    local dragging = false
+    local dragInput, dragStart, startPos
+    
+    local function update(input)
+        local delta = input.Position - dragStart
+        button.Position = UDim2.new(
+            startPos.X.Scale, 
+            startPos.X.Offset + delta.X, 
+            startPos.Y.Scale, 
+            startPos.Y.Offset + delta.Y
+        )
+    end
+    
+    button.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = button.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+    
+    button.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input == dragInput then
+            update(input)
         end
     end)
 end
 
--- تشغيل السكربت
-local function initialize()
-    -- معالجة اللاعبين الحاليين
-    for _, player in ipairs(Players:GetPlayers()) do
-        coroutine.wrap(function()
-            setupPlayer(player)
-            protectFromExternalScripts(player)
-        end)()
+-- إضافة ظلال وتحسينات بصرية
+local function addVisualEffects()
+    -- ظل للزر الرئيسي
+    local buttonShadow = Instance.new("UIStroke")
+    buttonShadow.Color = Color3.fromRGB(0, 0, 0)
+    buttonShadow.Thickness = 2
+    buttonShadow.Transparency = 0.5
+    buttonShadow.Parent = mainButton
+    
+    local buttonCorner = Instance.new("UICorner")
+    buttonCorner.CornerRadius = UDim.new(0, 10)
+    buttonCorner.Parent = mainButton
+    
+    -- ظل للإطار الرئيسي
+    local frameShadow = Instance.new("UIStroke")
+    frameShadow.Color = Color3.fromRGB(0, 0, 0)
+    frameShadow.Thickness = 3
+    frameShadow.Transparency = 0.3
+    frameShadow.Parent = mainFrame
+    
+    local frameCorner = Instance.new("UICorner")
+    frameCorner.CornerRadius = UDim.new(0, 15)
+    frameCorner.Parent = mainFrame
+    
+    -- زوايا دائرية لعناصر أخرى
+    local elements = {inputBox, sendButton, colorFrame, scrollFrame}
+    for _, element in ipairs(elements) do
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 8)
+        corner.Parent = element
     end
     
-    -- معالجة اللاعبين الجدد
-    Players.PlayerAdded:Connect(function(player)
-        player.CharacterAdded:Connect(function(character)
-            setupPlayer(player)
-            protectFromExternalScripts(player)
-        end)
+    -- تأثير hover للزر الرئيسي
+    mainButton.MouseEnter:Connect(function()
+        TweenService:Create(mainButton, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(40, 40, 40),
+            Size = UDim2.new(0, 55, 0, 55)
+        }):Play()
+    end)
+    
+    mainButton.MouseLeave:Connect(function()
+        TweenService:Create(mainButton, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(25, 25, 25),
+            Size = UDim2.new(0, 50, 0, 50)
+        }):Play()
     end)
 end
 
--- بدء التشغيل
-initialize()
+-- إضافة بعض العناصر الافتراضية للقائمة
+local function addDefaultItems()
+    addToScrollFrame("مرحبًا! هذه قائمة الرسائل")
+    addToScrollFrame("يمكنك كتابة رسالة وإرسالها للجميع")
+    addToScrollFrame("الرسائل تظهر هنا")
+end
 
--- تحديث مستمر للحماية
-RunService.Heartbeat:Connect(function()
-    for _, player in ipairs(Players:GetPlayers()) do
-        local character = player.Character
-        if character then
-            local humanoid = character:FindFirstChild("Humanoid")
-            if humanoid then
-                -- التأكد من أن الصحة ليست لا نهائية
-                if humanoid.Health > 100 then
-                    humanoid.Health = 100
-                end
-                if humanoid.MaxHealth > 100 then
-                    humanoid.MaxHealth = 100
-                end
-            end
-        end
+-- تهيئة الواجهة
+makeButtonDraggable(mainButton)
+addVisualEffects()
+addDefaultItems()
+
+-- تشغيل رسوميات الألوان
+coroutine.wrap(startColorAnimation)()
+
+-- أحداث الأزرار
+mainButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = not mainFrame.Visible
+    
+    if mainFrame.Visible then
+        -- تأثير ظهور
+        mainFrame.BackgroundTransparency = 1
+        TweenService:Create(mainFrame, TweenInfo.new(0.3), {
+            BackgroundTransparency = 0
+        }):Play()
     end
 end)
 
-print("✅ سكريبت الحماية والموت الفوري مفعل!")
+closeButton.MouseButton1Click:Connect(function()
+    TweenService:Create(mainFrame, TweenInfo.new(0.3), {
+        BackgroundTransparency = 1
+    }):Play()
+    
+    wait(0.3)
+    mainFrame.Visible = false
+    mainFrame.BackgroundTransparency = 0
+end)
+
+sendButton.MouseButton1Click:Connect(function()
+    local message = inputBox.Text
+    sendMessageToAll(message)
+end)
+
+inputBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local message = inputBox.Text
+        sendMessageToAll(message)
+    end
+end)
+
+-- حماية من الإدخال الطويل
+inputBox:GetPropertyChangedSignal("Text"):Connect(function()
+    if #inputBox.Text > 100 then
+        inputBox.Text = string.sub(inputBox.Text, 1, 100)
+    end
+end)
+
+print("✅ سكريبت الواجهة العربية جاهز للاستخدام!")
