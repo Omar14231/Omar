@@ -3,11 +3,13 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
 
 -- المتغيرات
 local player = Players.LocalPlayer
+local mouse = player:GetMouse()
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "AzoozScriptUI"
+screenGui.Name = "CameraTeleportUI"
 screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 screenGui.Parent = player:WaitForChild("PlayerGui")
@@ -36,9 +38,9 @@ mainButton.Size = UDim2.new(0, 60, 0, 60)
 mainButton.Position = UDim2.new(0.5, -30, 0.1, 0)
 mainButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 mainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-mainButton.Text = "⚙️"
+mainButton.Text = "🎯"
 mainButton.Font = Enum.Font.GothamBold
-mainButton.TextSize = 24
+mainButton.TextSize = 28
 mainButton.BorderSizePixel = 0
 mainButton.Visible = false
 mainButton.ZIndex = 10
@@ -47,7 +49,7 @@ mainButton.Parent = screenGui
 -- إطار القائمة الرئيسي (مخفي في البداية)
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0.85, 0, 0.7, 0) -- متجاوب مع الشاشة
+mainFrame.Size = UDim2.new(0.85, 0, 0.7, 0)
 mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
@@ -60,7 +62,7 @@ mainFrame.Parent = screenGui
 -- شريط العنوان
 local titleBar = Instance.new("Frame")
 titleBar.Name = "TitleBar"
-titleBar.Size = UDim2.new(1, 0, 0, 40)
+titleBar.Size = UDim2.new(1, 0, 0, 50)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
 titleBar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 titleBar.BackgroundTransparency = 0.5
@@ -71,13 +73,13 @@ titleBar.Parent = mainFrame
 -- زر الإغلاق
 local closeButton = Instance.new("TextButton")
 closeButton.Name = "CloseButton"
-closeButton.Size = UDim2.new(0, 35, 0, 35)
-closeButton.Position = UDim2.new(1, -40, 0, 2)
+closeButton.Size = UDim2.new(0, 40, 0, 40)
+closeButton.Position = UDim2.new(1, -45, 0, 5)
 closeButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeButton.Text = "×"
 closeButton.Font = Enum.Font.GothamBold
-closeButton.TextSize = 28
+closeButton.TextSize = 32
 closeButton.BorderSizePixel = 0
 closeButton.ZIndex = 7
 closeButton.Parent = titleBar
@@ -89,93 +91,93 @@ titleLabel.Size = UDim2.new(1, -50, 1, 0)
 titleLabel.Position = UDim2.new(0, 10, 0, 0)
 titleLabel.BackgroundTransparency = 1
 titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-titleLabel.Text = "سكريبت عربي"
+titleLabel.Text = "نظام الانتقال السريع"
 titleLabel.Font = Enum.Font.GothamBold
-titleLabel.TextSize = 22
+titleLabel.TextSize = 24
 titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 titleLabel.ZIndex = 7
 titleLabel.Parent = titleBar
 
--- مربع الإدخال
-local inputFrame = Instance.new("Frame")
-inputFrame.Name = "InputFrame"
-inputFrame.Size = UDim2.new(1, -20, 0, 50)
-inputFrame.Position = UDim2.new(0, 10, 0, 60)
-inputFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-inputFrame.BorderSizePixel = 0
-inputFrame.ZIndex = 6
-inputFrame.Parent = mainFrame
+-- تعليمات الاستخدام
+local instructionLabel = Instance.new("TextLabel")
+instructionLabel.Name = "InstructionLabel"
+instructionLabel.Size = UDim2.new(1, -20, 0, 60)
+instructionLabel.Position = UDim2.new(0, 10, 0, 60)
+instructionLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+instructionLabel.BackgroundTransparency = 0.3
+instructionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+instructionLabel.Text = "📌 ضع المؤشر على المكان المطلوب\nثم اضغط للانتقال الفوري"
+instructionLabel.Font = Enum.Font.Gotham
+instructionLabel.TextSize = 18
+instructionLabel.TextXAlignment = Enum.TextXAlignment.Center
+instructionLabel.TextWrapped = true
+instructionLabel.ZIndex = 6
+instructionLabel.Parent = mainFrame
 
-local inputBox = Instance.new("TextBox")
-inputBox.Name = "InputBox"
-inputBox.Size = UDim2.new(1, -10, 1, 0)
-inputBox.Position = UDim2.new(0, 5, 0, 0)
-inputBox.BackgroundTransparency = 1
-inputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-inputBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
-inputBox.PlaceholderText = "اكتب رسالتك هنا..."
-inputBox.Text = ""
-inputBox.Font = Enum.Font.Gotham
-inputBox.TextSize = 18
-inputBox.TextXAlignment = Enum.TextXAlignment.Right
-inputBox.ClearTextOnFocus = false
-inputBox.ZIndex = 7
-inputBox.Parent = inputFrame
+-- زر تشغيل وضع الكاميرا
+local cameraModeButton = Instance.new("TextButton")
+cameraModeButton.Name = "CameraModeButton"
+cameraModeButton.Size = UDim2.new(1, -20, 0, 60)
+cameraModeButton.Position = UDim2.new(0, 10, 0, 130)
+cameraModeButton.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+cameraModeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+cameraModeButton.Text = "🔍 تشغيل وضع الكاميرا الجوية"
+cameraModeButton.Font = Enum.Font.GothamBold
+cameraModeButton.TextSize = 20
+cameraModeButton.BorderSizePixel = 0
+cameraModeButton.ZIndex = 6
+cameraModeButton.Parent = mainFrame
 
--- زر الإرسال
-local sendButton = Instance.new("TextButton")
-sendButton.Name = "SendButton"
-sendButton.Size = UDim2.new(1, -20, 0, 45)
-sendButton.Position = UDim2.new(0, 10, 0, 120)
-sendButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
-sendButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-sendButton.Text = "إرسال"
-sendButton.Font = Enum.Font.GothamBold
-sendButton.TextSize = 20
-sendButton.BorderSizePixel = 0
-sendButton.ZIndex = 6
-sendButton.Parent = mainFrame
+-- حالة الكاميرا
+local cameraStatus = Instance.new("TextLabel")
+cameraStatus.Name = "CameraStatus"
+cameraStatus.Size = UDim2.new(1, -20, 0, 40)
+cameraStatus.Position = UDim2.new(0, 10, 0, 200)
+cameraStatus.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+cameraStatus.BackgroundTransparency = 0.5
+cameraStatus.TextColor3 = Color3.fromRGB(200, 200, 200)
+cameraStatus.Text = "⏸️ وضع الكاميرا: غير نشط"
+cameraStatus.Font = Enum.Font.Gotham
+cameraStatus.TextSize = 18
+cameraStatus.TextXAlignment = Enum.TextXAlignment.Center
+cameraStatus.ZIndex = 6
+cameraStatus.Parent = mainFrame
 
--- منطقة عرض الرسائل
-local messagesFrame = Instance.new("ScrollingFrame")
-messagesFrame.Name = "MessagesFrame"
-messagesFrame.Size = UDim2.new(1, -20, 1, -180)
-messagesFrame.Position = UDim2.new(0, 10, 0, 175)
-messagesFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-messagesFrame.BackgroundTransparency = 0.5
-messagesFrame.BorderSizePixel = 0
-messagesFrame.ScrollBarThickness = 6
-messagesFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-messagesFrame.ZIndex = 6
-messagesFrame.Parent = mainFrame
+-- مؤشر الهدف
+local targetIndicator = Instance.new("Part")
+targetIndicator.Name = "TargetIndicator"
+targetIndicator.Size = Vector3.new(2, 0.2, 2)
+targetIndicator.Anchored = true
+targetIndicator.CanCollide = false
+targetIndicator.Material = EnumMaterial.Neon
+targetIndicator.Color = Color3.fromRGB(0, 255, 0)
+targetIndicator.Transparency = 0.7
+targetIndicator.Parent = Workspace
 
--- ترتيب الرسائل
-local messagesLayout = Instance.new("UIListLayout")
-messagesLayout.Padding = UDim.new(0, 8)
-messagesLayout.SortOrder = Enum.SortOrder.LayoutOrder
-messagesLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-messagesLayout.Parent = messagesFrame
-
-local messagesPadding = Instance.new("UIPadding")
-messagesPadding.PaddingTop = UDim.new(0, 10)
-messagesPadding.PaddingBottom = UDim.new(0, 10)
-messagesPadding.PaddingLeft = UDim.new(0, 5)
-messagesPadding.PaddingRight = UDim.new(0, 5)
-messagesPadding.Parent = messagesFrame
+-- مؤشر الهدف الدائري
+local circleIndicator = Instance.new("Part")
+circleIndicator.Name = "CircleIndicator"
+circleIndicator.Shape = Enum.PartType.Cylinder
+circleIndicator.Size = Vector3.new(0.2, 5, 5)
+circleIndicator.Anchored = true
+circleIndicator.CanCollide = false
+circleIndicator.Material = EnumMaterial.Neon
+circleIndicator.Color = Color3.fromRGB(255, 255, 0)
+circleIndicator.Transparency = 0.5
+circleIndicator.Parent = Workspace
 
 -- إضافة الزوايا الدائرية والظلال
 local function addVisualEffects()
 	-- زوايا دائرية للزر الرئيسي
 	local buttonCorner = Instance.new("UICorner")
-	buttonCorner.CornerRadius = UDim.new(1, 0) -- دائري كامل
+	buttonCorner.CornerRadius = UDim.new(1, 0)
 	buttonCorner.Parent = mainButton
 	
 	-- ظل للزر الرئيسي
-	local buttonShadow = Instance.new("UIStroke")
-	buttonShadow.Color = Color3.fromRGB(0, 150, 255)
-	buttonShadow.Thickness = 3
-	buttonShadow.Transparency = 0
-	buttonShadow.Parent = mainButton
+	local buttonStroke = Instance.new("UIStroke")
+	buttonStroke.Color = Color3.fromRGB(0, 150, 255)
+	buttonStroke.Thickness = 3
+	buttonStroke.Parent = mainButton
 	
 	-- زوايا للإطار الرئيسي
 	local frameCorner = Instance.new("UICorner")
@@ -183,17 +185,16 @@ local function addVisualEffects()
 	frameCorner.Parent = mainFrame
 	
 	-- ظل للإطار الرئيسي
-	local frameShadow = Instance.new("UIStroke")
-	frameShadow.Color = Color3.fromRGB(0, 150, 255)
-	frameShadow.Thickness = 2
-	frameShadow.Transparency = 0
-	frameShadow.Parent = mainFrame
+	local frameStroke = Instance.new("UIStroke")
+	frameStroke.Color = Color3.fromRGB(0, 150, 255)
+	frameStroke.Thickness = 2
+	frameStroke.Parent = mainFrame
 	
 	-- زوايا لعناصر أخرى
-	local cornerElements = {inputFrame, sendButton, messagesFrame}
+	local cornerElements = {instructionLabel, cameraModeButton, cameraStatus}
 	for _, element in ipairs(cornerElements) do
 		local corner = Instance.new("UICorner")
-		corner.CornerRadius = UDim.new(0, 8)
+		corner.CornerRadius = UDim.new(0, 10)
 		corner.Parent = element
 	end
 	
@@ -218,7 +219,6 @@ local function makeButtonDraggable(button)
 		local newX = startPos.X.Offset + delta.X
 		local newY = startPos.Y.Offset + delta.Y
 		
-		-- الحفاظ داخل الشاشة
 		local viewportSize = workspace.CurrentCamera.ViewportSize
 		newX = math.clamp(newX, 0, viewportSize.X - button.AbsoluteSize.X)
 		newY = math.clamp(newY, 0, viewportSize.Y - button.AbsoluteSize.Y)
@@ -264,8 +264,7 @@ local function startColorAnimation()
 		Color3.fromRGB(0, 255, 255)   -- سماوي
 	}
 	
-	-- الحصول على جميع عناصر الزوايا
-	local elements = {mainFrame, mainButton, sendButton}
+	local elements = {mainFrame, mainButton, cameraModeButton}
 	local strokes = {}
 	
 	for _, element in ipairs(elements) do
@@ -280,117 +279,218 @@ local function startColorAnimation()
 	while true do
 		local color = colors[currentIndex]
 		
-		-- تغيير لون جميع الظلال
 		for _, stroke in ipairs(strokes) do
 			TweenService:Create(stroke, TweenInfo.new(0.5), {
 				Color = color
 			}):Play()
 		end
 		
-		-- تغيير لون خلفية الزر
+		-- تغيير لون الزر الرئيسي
 		TweenService:Create(mainButton, TweenInfo.new(0.5), {
 			BackgroundColor3 = Color3.fromRGB(color.R * 50, color.G * 50, color.B * 50)
 		}):Play()
+		
+		-- تغيير لون مؤشر الهدف
+		targetIndicator.Color = color
+		circleIndicator.Color = Color3.fromRGB(color.R * 255, color.G * 255, color.B * 255)
 		
 		currentIndex = currentIndex % #colors + 1
 		wait(1)
 	end
 end
 
--- دالة لإضافة رسالة للعرض
-local function addMessageToDisplay(sender, message)
-	local messageFrame = Instance.new("Frame")
-	messageFrame.Name = "Message"
-	messageFrame.Size = UDim2.new(0.95, 0, 0, 0)
-	messageFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-	messageFrame.BackgroundTransparency = 0.3
-	messageFrame.LayoutOrder = #messagesFrame:GetChildren()
+-- متغيرات الكاميرا
+local cameraActive = false
+local originalCameraType = Enum.CameraType.Custom
+local originalCFrame = nil
+local cameraSubject = nil
+
+-- دالة لتفعيل وضع الكاميرا الجوية
+local function activateAerialCamera()
+	if cameraActive then return end
 	
-	local messageCorner = Instance.new("UICorner")
-	messageCorner.CornerRadius = UDim.new(0, 10)
-	messageCorner.Parent = messageFrame
+	cameraActive = true
+	local camera = Workspace.CurrentCamera
 	
-	local senderLabel = Instance.new("TextLabel")
-	senderLabel.Name = "Sender"
-	senderLabel.Size = UDim2.new(1, -10, 0, 25)
-	senderLabel.Position = UDim2.new(0, 5, 0, 5)
-	senderLabel.BackgroundTransparency = 1
-	senderLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
-	senderLabel.Text = sender .. ":"
-	senderLabel.Font = Enum.Font.GothamBold
-	senderLabel.TextSize = 16
-	senderLabel.TextXAlignment = Enum.TextXAlignment.Right
-	senderLabel.TextWrapped = true
-	senderLabel.Parent = messageFrame
+	-- حفظ الإعدادات الأصلية
+	originalCameraType = camera.CameraType
+	originalCFrame = camera.CFrame
+	cameraSubject = camera.CameraSubject
 	
-	local messageLabel = Instance.new("TextLabel")
-	messageLabel.Name = "Text"
-	messageLabel.Size = UDim2.new(1, -10, 0, 0)
-	messageLabel.Position = UDim2.new(0, 5, 0, 30)
-	messageLabel.BackgroundTransparency = 1
-	messageLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-	messageLabel.Text = message
-	messageLabel.Font = Enum.Font.Gotham
-	messageLabel.TextSize = 18
-	messageLabel.TextXAlignment = Enum.TextXAlignment.Right
-	messageLabel.TextWrapped = true
-	messageLabel.Parent = messageFrame
+	-- تغيير وضع الكاميرا
+	camera.CameraType = Enum.CameraType.Scriptable
 	
-	-- حساب ارتفاع النص
-	local textHeight = 20 + string.len(message) / 15 * 20
-	messageLabel.Size = UDim2.new(1, -10, 0, textHeight)
-	messageFrame.Size = UDim2.new(0.95, 0, 0, textHeight + 40)
-	
-	messageFrame.Parent = messagesFrame
-	
-	-- تحديث حجم CanvasSize
-	messagesFrame.CanvasSize = UDim2.new(0, 0, 0, messagesLayout.AbsoluteContentSize.Y + 20)
-	
-	-- التمرير للأسفل
-	messagesFrame.CanvasPosition = Vector2.new(0, messagesFrame.CanvasSize.Y.Offset)
-	
-	return messageFrame
+	-- رفع الكاميرا للأعلى والنظر للأسفل
+	local character = player.Character
+	if character then
+		local rootPart = character:FindFirstChild("HumanoidRootPart") or character:FindFirstChild("Head")
+		if rootPart then
+			local position = rootPart.Position + Vector3.new(0, 50, 0) -- 50 وحدة فوق
+			local lookAt = rootPart.Position
+			
+			camera.CFrame = CFrame.new(position, lookAt)
+			
+			-- تحديث حالة الكاميرا
+			cameraStatus.Text = "✅ وضع الكاميرا: نشط\n👆 حرك الماوس للتحكم - 🖱️ اضغط للانتقال"
+			cameraStatus.TextColor3 = Color3.fromRGB(0, 255, 0)
+			
+			cameraModeButton.Text = "⏹️ إيقاف وضع الكاميرا الجوية"
+			cameraModeButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+			
+			-- إظهار مؤشر الهدف
+			targetIndicator.Transparency = 0.3
+			circleIndicator.Transparency = 0.3
+		end
+	end
 end
 
--- دالة لإرسال الرسالة
-local function sendMessage()
-	local message = inputBox.Text
-	if message == "" or string.len(message) < 1 then
-		return
+-- دالة لإلغاء وضع الكاميرا الجوية
+local function deactivateAerialCamera()
+	if not cameraActive then return end
+	
+	cameraActive = false
+	local camera = Workspace.CurrentCamera
+	
+	-- استعادة الإعدادات الأصلية
+	camera.CameraType = originalCameraType
+	if cameraSubject then
+		camera.CameraSubject = cameraSubject
 	end
 	
-	-- إضافة الرسالة للعرض المحلي
-	addMessageToDisplay(player.Name, message)
+	-- تحديث حالة الكاميرا
+	cameraStatus.Text = "⏸️ وضع الكاميرا: غير نشط"
+	cameraStatus.TextColor3 = Color3.fromRGB(200, 200, 200)
 	
-	-- هنا يمكنك إضافة كود لإرسال الرسالة للاعبين الآخرين
-	-- مثال:
-	-- game.ReplicatedStorage.SendMessage:FireServer(message)
+	cameraModeButton.Text = "🔍 تشغيل وضع الكاميرا الجوية"
+	cameraModeButton.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
 	
-	-- عرض في الشات (للتجربة)
-	game.StarterGui:SetCore("ChatMakeSystemMessage", {
-		Text = "[" .. player.Name .. "]: " .. message,
-		Color = Color3.fromRGB(0, 200, 255),
-		Font = Enum.Font.Gotham,
-		TextSize = 18
-	})
+	-- إخفاء مؤشر الهدف
+	targetIndicator.Transparency = 0.7
+	circleIndicator.Transparency = 0.7
+end
+
+-- دالة للانتقال إلى الهدف
+local function teleportToTarget()
+	if not cameraActive then return end
 	
-	-- مسح حقل الإدخال
-	inputBox.Text = ""
+	local targetPos = targetIndicator.Position
+	local character = player.Character
+	
+	if character then
+		local humanoid = character:FindFirstChild("Humanoid")
+		local rootPart = character:FindFirstChild("HumanoidRootPart")
+		
+		if humanoid and rootPart then
+			-- الانتقال إلى الموقع المستهدف
+			rootPart.CFrame = CFrame.new(targetPos + Vector3.new(0, 5, 0))
+			
+			-- تأثير مرئي للانتقال
+			local teleportEffect = Instance.new("Part")
+			teleportEffect.Size = Vector3.new(5, 5, 5)
+			telepretEffect.Position = targetPos
+			teleportEffect.Anchored = true
+			teleportEffect.CanCollide = false
+			teleportEffect.Material = EnumMaterial.Neon
+			teleportEffect.Color = Color3.fromRGB(0, 255, 255)
+			teleportEffect.Transparency = 0.3
+			teleportEffect.Parent = Workspace
+			
+			-- إزالة التأثير بعد ثانية
+			game:GetService("Debris"):AddItem(teleportEffect, 1)
+			
+			-- إغلاق القائمة بعد الانتقال
+			deactivateAerialCamera()
+			
+			TweenService:Create(mainFrame, TweenInfo.new(0.3), {
+				BackgroundTransparency = 1
+			}):Play()
+			
+			wait(0.3)
+			mainFrame.Visible = false
+			mainFrame.BackgroundTransparency = 0.1
+		end
+	end
+end
+
+-- دالة لتحديث مؤشر الهدف
+local function updateTargetIndicator()
+	while true do
+		if cameraActive then
+			local mousePos = mouse.Hit.Position
+			
+			-- تحديث موقع المؤشر
+			targetIndicator.Position = mousePos
+			circleIndicator.Position = mousePos + Vector3.new(0, 0.1, 0)
+			circleIndicator.Orientation = Vector3.new(0, 0, 90)
+			
+			-- تغيير لون المؤشر عند التأشير على مكان صالح
+			local ray = Ray.new(mousePos + Vector3.new(0, 100, 0), Vector3.new(0, -200, 0))
+			local hitPart, hitPosition = Workspace:FindPartOnRay(ray, player.Character)
+			
+			if hitPart then
+				targetIndicator.Color = Color3.fromRGB(0, 255, 0) -- أخضر
+				circleIndicator.Color = Color3.fromRGB(0, 255, 0)
+			else
+				targetIndicator.Color = Color3.fromRGB(255, 0, 0) -- أحمر
+				circleIndicator.Color = Color3.fromRGB(255, 0, 0)
+			end
+		end
+		RunService.RenderStepped:Wait()
+	end
+end
+
+-- دالة للتحكم بالكاميرا
+local function cameraControl()
+	local camera = Workspace.CurrentCamera
+	local lastMousePos = nil
+	
+	UserInputService.InputChanged:Connect(function(input)
+		if cameraActive and input.UserInputType == Enum.UserInputType.MouseMovement then
+			local currentMousePos = input.Position
+			
+			if lastMousePos then
+				local delta = currentMousePos - lastMousePos
+				
+				-- تحريك الكاميرا بناءً على حركة الماوس
+				local currentCF = camera.CFrame
+				local rightVector = currentCF.RightVector
+				local upVector = currentCF.UpVector
+				
+				-- تحريك أفقي وعمودي
+				local moveRight = -delta.X * 0.5
+				local moveForward = delta.Y * 0.5
+				
+				local newPosition = currentCF.Position + 
+					(rightVector * moveRight) + 
+					(upVector * moveForward)
+				
+				-- الحفاظ على النظر للأسفل
+				local lookPosition = newPosition - Vector3.new(0, 30, 0)
+				camera.CFrame = CFrame.new(newPosition, lookPosition)
+			end
+			
+			lastMousePos = currentMousePos
+		end
+	end)
+	
+	-- إعادة تعيين lastMousePos عند ترك الماوس
+	UserInputService.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement then
+			lastMousePos = nil
+		end
+	end)
 end
 
 -- تكييف الواجهة مع حجم الشاشة
 local function adaptToScreenSize()
-	local viewportSize = workspace.CurrentCamera.ViewportSize
+	local viewportSize = Workspace.CurrentCamera.ViewportSize
 	
-	-- تكييف حجم القائمة للجوال
 	if viewportSize.Y > viewportSize.X then
-		-- وضع عمودي (جوال)
-		mainFrame.Size = UDim2.new(0.9, 0, 0.8, 0)
-		messagesFrame.Size = UDim2.new(1, -20, 1, -200)
+		-- جوال
+		mainFrame.Size = UDim2.new(0.9, 0, 0.75, 0)
 	else
-		-- وضع أفقي (كمبيوتر)
-		mainFrame.Size = UDim2.new(0.7, 0, 0.8, 0)
-		messagesFrame.Size = UDim2.new(1, -20, 1, -180)
+		-- كمبيوتر
+		mainFrame.Size = UDim2.new(0.7, 0, 0.65, 0)
 	end
 end
 
@@ -398,7 +498,7 @@ end
 addVisualEffects()
 makeButtonDraggable(mainButton)
 
--- إخفاء الرسالة الترحيبية بعد 5 ثواني وإظهار الزر
+-- إخفاء الرسالة الترحيبية بعد 5 ثواني
 wait(5)
 TweenService:Create(welcomeLabel, TweenInfo.new(1), {
 	BackgroundTransparency = 1,
@@ -418,10 +518,16 @@ TweenService:Create(mainButton, TweenInfo.new(0.5), {
 
 -- تكييف مع حجم الشاشة
 adaptToScreenSize()
-workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(adaptToScreenSize)
+Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(adaptToScreenSize)
 
 -- تشغيل أنيميشن الألوان
 coroutine.wrap(startColorAnimation)()
+
+-- تشغيل تحديث مؤشر الهدف
+coroutine.wrap(updateTargetIndicator)()
+
+-- تشغيل تحكم الكاميرا
+coroutine.wrap(cameraControl)()
 
 -- أحداث الأزرار
 mainButton.MouseButton1Click:Connect(function()
@@ -432,10 +538,6 @@ mainButton.MouseButton1Click:Connect(function()
 		TweenService:Create(mainFrame, TweenInfo.new(0.3), {
 			BackgroundTransparency = 0.1
 		}):Play()
-		
-		-- إعادة تركيز الإدخال
-		wait(0.3)
-		inputBox:CaptureFocus()
 	end
 end)
 
@@ -447,23 +549,45 @@ closeButton.MouseButton1Click:Connect(function()
 	wait(0.3)
 	mainFrame.Visible = false
 	mainFrame.BackgroundTransparency = 0.1
+	deactivateAerialCamera()
 end)
 
-sendButton.MouseButton1Click:Connect(sendMessage)
-
-inputBox.FocusLost:Connect(function(enterPressed)
-	if enterPressed then
-		sendMessage()
+cameraModeButton.MouseButton1Click:Connect(function()
+	if cameraActive then
+		deactivateAerialCamera()
+	else
+		activateAerialCamera()
 	end
 end)
 
--- إضافة رسائل افتراضية للعرض
-addMessageToDisplay("System", "مرحباً! يمكنك كتابة رسائل هنا")
-addMessageToDisplay("System", "الرسائل ستبقى في هذه القائمة")
-
--- التأكد من أن النصوص تظهر بشكل صحيح
-RunService.RenderStepped:Connect(function()
-	messagesFrame.CanvasSize = UDim2.new(0, 0, 0, messagesLayout.AbsoluteContentSize.Y + 20)
+-- حدث النقر للانتقال
+mouse.Button1Down:Connect(function()
+	if cameraActive then
+		teleportToTarget()
+	end
 end)
 
-print("✅ سكريبت Azooz جاهز!")
+-- حدث المس للجوال
+UserInputService.TouchTap:Connect(function(touchPos, gameProcessed)
+	if cameraActive and not gameProcessed then
+		teleportToTarget()
+	end
+end)
+
+-- إغلاق القائمة بمفتاح ESC
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if input.KeyCode == Enum.KeyCode.Escape and not gameProcessed then
+		if mainFrame.Visible then
+			TweenService:Create(mainFrame, TweenInfo.new(0.3), {
+				BackgroundTransparency = 1
+			}):Play()
+			
+			wait(0.3)
+			mainFrame.Visible = false
+			mainFrame.BackgroundTransparency = 0.1
+			deactivateAerialCamera()
+		end
+	end
+end)
+
+print("✅ نظام الانتقال السريع جاهز!")
